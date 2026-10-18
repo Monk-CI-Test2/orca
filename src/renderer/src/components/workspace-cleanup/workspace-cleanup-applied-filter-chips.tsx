@@ -1,3 +1,4 @@
+import { getWorkspaceCleanupBranchMatchModeLabel } from './workspace-cleanup-facet-labels'
 import React from 'react'
 import { X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -104,10 +105,41 @@ function buildAppliedFilterFormatters(): Parameters<typeof listAppliedWorkspaceC
       translate('components.workspace.cleanup.browse.chip.minBehind', 'Behind {{value0}}+', {
         value0: count
       }),
-    branchQuery: (value) =>
-      translate('components.workspace.cleanup.browse.chip.branchQuery', 'Branch: {{value0}}', {
-        value0: value
-      }),
+    branchQuery: (value, options) => {
+      const label = translate(
+        'components.workspace.cleanup.browse.chip.branchQuery',
+        'Branch: {{value0}}',
+        { value0: value }
+      )
+      if (
+        (options.branchMatchMode ?? 'contains') === 'contains' &&
+        !options.branchCaseSensitive &&
+        options.branchQuerySyntax !== 'expression'
+      ) {
+        return label
+      }
+      return translate(
+        'components.workspace.cleanup.browse.chip.branchExpression',
+        '{{value0}} · {{value1}} · {{value2}} · {{value3}}',
+        {
+          value0: label,
+          value1: getWorkspaceCleanupBranchMatchModeLabel(options.branchMatchMode ?? 'contains'),
+          value2: options.branchCaseSensitive
+            ? translate(
+                'components.workspace.cleanup.browse.branchCaseSensitive',
+                'Case sensitive branch names'
+              )
+            : translate('components.workspace.cleanup.browse.branchCaseInsensitive', 'Ignore case'),
+          value3:
+            options.branchQuerySyntax === 'expression'
+              ? translate(
+                  'components.workspace.cleanup.browse.branchSyntax.expression',
+                  'Expressions'
+                )
+              : translate('components.workspace.cleanup.browse.branchSyntax.literal', 'Literal')
+        }
+      )
+    },
     pathPrefix: (value) =>
       translate('components.workspace.cleanup.browse.chip.pathPrefix', 'Path: {{value0}}', {
         value0: value
