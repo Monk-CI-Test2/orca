@@ -19107,6 +19107,8 @@
             "created": "Created before"
           },
           "idleMinDays": "Idle for at least",
+          "idleMaxDays": "Idle for at most",
+          "includeMissingSignal": "Include unknown activity",
           "days": "days",
           "neverVisited": "Never opened",
           "minSize": "At least",
@@ -19209,6 +19211,8 @@
           "removeFilter": "Remove filter {{value0}}",
           "chip": {
             "idleDays": "Idle {{value0}}d+",
+            "idleMaxDays": "Idle ≤ {{value0}}d",
+            "excludesMissingSignal": "Known activity only",
             "neverVisited": "Never visited",
             "minSize": "At least {{value0}} MB",
             "maxSize": "At most {{value0}} MB",

@@ -4,6 +4,8 @@ import { listAppliedWorkspaceCleanupFilters } from './workspace-cleanup-applied-
 
 const FORMAT = {
   idleDays: (d: number) => `Idle >= ${d}d`,
+  idleMaxDays: (d: number) => `Idle <= ${d}d`,
+  excludesMissingSignal: () => 'Known activity only',
   neverVisited: () => 'Never visited',
   minSize: (b: number) => `At least ${b}B`,
   maxSize: (b: number) => `At most ${b}B`,
@@ -149,5 +151,28 @@ describe('listAppliedWorkspaceCleanupFilters', () => {
     const next = list(filters)[0].clear(filters)
 
     expect(next.query).toBe('release')
+  })
+})
+
+describe('activity range filter chips', () => {
+  it('preserves the lower bound when removing the upper bound', () => {
+    const filters = createDefaultWorkspaceCleanupFilterState()
+    filters.activity.idleMinDays = 5
+    filters.activity.idleMaxDays = 20
+    filters.activity.includeMissingSignal = false
+    const applied = list(filters)
+    expect(applied.map((chip) => chip.id)).toEqual([
+      'activity.idleMinDays',
+      'activity.idleMaxDays',
+      'activity.includeMissingSignal'
+    ])
+    expect(applied[1].clear(filters).activity).toEqual({ ...filters.activity, idleMaxDays: null })
+    expect(applied[2].clear(filters).activity.includeMissingSignal).toBe(true)
+    expect(filters.activity.idleMaxDays).toBe(20)
+  })
+  it('shows a zero-day maximum as an active constraint', () => {
+    const filters = createDefaultWorkspaceCleanupFilterState()
+    filters.activity.idleMaxDays = 0
+    expect(list(filters)[0].label).toBe('Idle <= 0d')
   })
 })

@@ -136,6 +136,18 @@ describe('workspace cleanup facet controls', () => {
     }
   })
 
+  it('edits the inclusive maximum and unknown-activity policy independently', () => {
+    const onPatch = createPatchMock()
+    renderFacets(createDefaultWorkspaceCleanupFilterState(), onPatch)
+    const input =
+      container?.querySelector<HTMLInputElement>('[aria-label="Idle for at most"]') ?? null
+    expect(input).not.toBeNull()
+    act(() => typeInto(input, '10'))
+    expect(onPatch).toHaveBeenCalledWith('activity', { idleMaxDays: 10 })
+    act(() => control('Include unknown activity')?.click())
+    expect(onPatch).toHaveBeenCalledWith('activity', { includeMissingSignal: false })
+  })
+
   it('multi-selects git states', () => {
     const onPatch = createPatchMock()
     const filters = createDefaultWorkspaceCleanupFilterState()

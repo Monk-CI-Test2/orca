@@ -54,6 +54,21 @@ export function WorkspaceCleanupLifecycleFacets({
           suffix={translate('components.workspace.cleanup.browse.days', 'days')}
           onChange={(idleMinDays) => onPatch('activity', { idleMinDays })}
         />
+        <FacetNumberField
+          label={translate('components.workspace.cleanup.browse.idleMaxDays', 'Idle for at most')}
+          value={filters.activity.idleMaxDays ?? null}
+          suffix={translate('components.workspace.cleanup.browse.days', 'days')}
+          onChange={(idleMaxDays) => onPatch('activity', { idleMaxDays })}
+        />
+        <FacetCheckbox
+          id="activity-include-missing-signal"
+          label={translate(
+            'components.workspace.cleanup.browse.includeMissingSignal',
+            'Include unknown activity'
+          )}
+          checked={filters.activity.includeMissingSignal !== false}
+          onChange={(includeMissingSignal) => onPatch('activity', { includeMissingSignal })}
+        />
         <FacetCheckbox
           id="activity-never-visited"
           label={translate('components.workspace.cleanup.browse.neverVisited', 'Never opened')}
