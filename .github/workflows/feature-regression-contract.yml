@@ -1,0 +1,48 @@
+name: Feature regression contracts
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: feature-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  regression:
+    name: Changed feature regression contracts
+    runs-on: monkci-ubuntu-24.04-4
+    timeout-minutes: 30
+    env:
+      ORCA_BACKGROUND_LAUNCH: '1'
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+          fetch-depth: 2
+      - uses: ./.github/actions/install-node-dependencies
+        with:
+          native-runtime: node
+      - name: Run changed feature contracts
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          base="${BASE_SHA:-HEAD^}"
+          git diff --name-only --diff-filter=AM "$base" HEAD -- src > "$RUNNER_TEMP/feature-changed-paths"
+          tests=()
+          while IFS= read -r file; do
+            if [[ "$file" =~ \.test\.tsx?$ ]]; then
+              tests+=("$file")
+            fi
+          done < "$RUNNER_TEMP/feature-changed-paths"
+          if (( ${#tests[@]} == 0 )); then
+            echo "No changed feature tests in this revision."
+            exit 0
+          fi
+          pnpm test "${tests[@]}"
