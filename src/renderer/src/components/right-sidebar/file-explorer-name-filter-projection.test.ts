@@ -95,3 +95,24 @@ describe('name-filter filename identity', () => {
     }
   )
 })
+
+describe('Explorer qualified query projection', () => {
+  it('test_explorer_extension_filter_excludes_tsx', () => {
+    const projection = createNameFilteredFileExplorerProjection({
+      worktreePath: '/repo',
+      nameFilter: {
+        query: 'ext:ts -path:vendor',
+        relativePaths: ['src/a.ts', 'src/a.tsx', 'vendor/a.ts']
+      },
+      ignoredSet: new Set(),
+      showDotfiles: true,
+      showGitIgnoredFiles: true
+    })
+    expect(
+      projection
+        .getVisibleSlice(0, 100)
+        .filter((row) => !row.isDirectory)
+        .map((row) => row.relativePath)
+    ).toEqual(['src/a.ts'])
+  })
+})
