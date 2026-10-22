@@ -1,3 +1,4 @@
+import { compileWorkspaceCleanupBranchQuery } from '../../../../shared/workspace-cleanup-branch-query'
 import type { WorkspaceCleanupFacets } from './workspace-cleanup-facets'
 import type {
   WorkspaceCleanupActivityFilter,
@@ -101,8 +102,7 @@ export function matchesWorkspaceCleanupGit(
   if (filter.minBehind !== null && (facets.upstreamBehind ?? 0) < filter.minBehind) {
     return false
   }
-  const branchQuery = filter.branchQuery.trim().toLowerCase()
-  if (branchQuery && !facets.branch.toLowerCase().includes(branchQuery)) {
+  if (!compileWorkspaceCleanupBranchQuery(filter)(facets.branch)) {
     return false
   }
   return (

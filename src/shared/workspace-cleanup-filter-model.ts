@@ -80,11 +80,17 @@ export type WorkspaceCleanupAgentFilter = {
   retainedDoneAgents: WorkspaceCleanupTriState
 }
 
+export type WorkspaceCleanupBranchMatchMode = 'contains' | 'exact' | 'prefix'
+export type WorkspaceCleanupBranchQuerySyntax = 'literal' | 'expression'
+
 export type WorkspaceCleanupGitFilterState = {
   states: WorkspaceCleanupGitState[]
   minAhead: number | null
   minBehind: number | null
   branchQuery: string
+  branchMatchMode?: WorkspaceCleanupBranchMatchMode
+  branchQuerySyntax?: WorkspaceCleanupBranchQuerySyntax
+  branchCaseSensitive?: boolean
   prunable: WorkspaceCleanupTriState
   locked: WorkspaceCleanupTriState
 }
@@ -157,6 +163,9 @@ export function createDefaultWorkspaceCleanupFilterState(): WorkspaceCleanupFilt
       minAhead: null,
       minBehind: null,
       branchQuery: '',
+      branchMatchMode: 'contains',
+      branchQuerySyntax: 'literal',
+      branchCaseSensitive: false,
       prunable: 'any',
       locked: 'any'
     },

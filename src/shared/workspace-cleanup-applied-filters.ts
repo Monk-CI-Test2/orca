@@ -1,5 +1,6 @@
 import {
   createDefaultWorkspaceCleanupFilterState,
+  type WorkspaceCleanupGitFilterState,
   type WorkspaceCleanupFilterState
 } from './workspace-cleanup-filter-model'
 
@@ -31,7 +32,7 @@ type Formatters = {
   triState: (kind: string, mode: 'only' | 'exclude') => string
   minAhead: (count: number) => string
   minBehind: (count: number) => string
-  branchQuery: (value: string) => string
+  branchQuery: (value: string, options: WorkspaceCleanupGitFilterState) => string
   pathPrefix: (value: string) => string
   presence: (kind: string, mode: string) => string
   completelyEmpty: () => string
@@ -154,9 +155,15 @@ export function listAppliedWorkspaceCleanupFilters(
     }))
   }
   if (git.branchQuery.trim().length > 0) {
-    add('git.branchQuery', format.branchQuery(git.branchQuery.trim()), (f) => ({
+    add('git.branchQuery', format.branchQuery(git.branchQuery.trim(), git), (f) => ({
       ...f,
-      git: { ...f.git, branchQuery: '' }
+      git: {
+        ...f.git,
+        branchQuery: '',
+        branchMatchMode: 'contains',
+        branchQuerySyntax: 'literal',
+        branchCaseSensitive: false
+      }
     }))
   }
   for (const key of ['prunable', 'locked'] as const) {

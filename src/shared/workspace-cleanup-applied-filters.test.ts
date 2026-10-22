@@ -151,3 +151,22 @@ describe('listAppliedWorkspaceCleanupFilters', () => {
     expect(next.query).toBe('release')
   })
 })
+
+describe('branch expression chip reset', () => {
+  it('clears all branch-query options while preserving other Git constraints', () => {
+    const filters = createDefaultWorkspaceCleanupFilterState()
+    filters.git = {
+      ...filters.git,
+      branchQuery: 'release, !wip',
+      branchMatchMode: 'prefix',
+      branchQuerySyntax: 'expression',
+      branchCaseSensitive: true,
+      minAhead: 3
+    }
+    const chip = list(filters).find((entry) => entry.id === 'git.branchQuery')
+    expect(chip).toBeDefined()
+    const cleared = chip!.clear(filters)
+    expect(cleared.git).toEqual({ ...createDefaultWorkspaceCleanupFilterState().git, minAhead: 3 })
+    expect(filters.git.branchQuery).toBe('release, !wip')
+  })
+})

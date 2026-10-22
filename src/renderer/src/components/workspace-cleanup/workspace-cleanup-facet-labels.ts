@@ -3,6 +3,7 @@ import type { HostedReviewProvider } from '../../../../shared/hosted-review'
 import type {
   WorkspaceCleanupAgentState,
   WorkspaceCleanupBlockerMode,
+  WorkspaceCleanupBranchMatchMode,
   WorkspaceCleanupGitState,
   WorkspaceCleanupIdleSignal,
   WorkspaceCleanupPresence,
@@ -158,4 +159,17 @@ export function getWorkspaceCleanupBlockerModeLabel(value: WorkspaceCleanupBlock
   return value === 'any-of'
     ? translate('components.workspace.cleanup.browse.blockerModeAny', 'Has any')
     : translate('components.workspace.cleanup.browse.blockerModeNone', 'Has none')
+}
+
+export function getWorkspaceCleanupBranchMatchModeLabel(
+  mode: WorkspaceCleanupBranchMatchMode
+): string {
+  switch (mode) {
+    case 'contains':
+      return translate('components.workspace.cleanup.browse.branchMatch.contains', 'Contains')
+    case 'exact':
+      return translate('components.workspace.cleanup.browse.branchMatch.exact', 'Exact name')
+    case 'prefix':
+      return translate('components.workspace.cleanup.browse.branchMatch.prefix', 'Starts with')
+  }
 }

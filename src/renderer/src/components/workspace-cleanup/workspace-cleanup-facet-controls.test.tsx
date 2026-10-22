@@ -136,6 +136,16 @@ describe('workspace cleanup facet controls', () => {
     }
   })
 
+  it('opts into branch expressions and case sensitivity independently', () => {
+    const onPatch = createPatchMock()
+    renderFacets(createDefaultWorkspaceCleanupFilterState(), onPatch)
+    expect(control('Branch matching')).not.toBeNull()
+    act(() => control('Use comma-separated expressions')?.click())
+    expect(onPatch).toHaveBeenCalledWith('git', { branchQuerySyntax: 'expression' })
+    act(() => control('Case sensitive branch names')?.click())
+    expect(onPatch).toHaveBeenCalledWith('git', { branchCaseSensitive: true })
+  })
+
   it('multi-selects git states', () => {
     const onPatch = createPatchMock()
     const filters = createDefaultWorkspaceCleanupFilterState()
