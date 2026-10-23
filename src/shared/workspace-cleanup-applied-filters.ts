@@ -22,6 +22,8 @@ export type WorkspaceCleanupAppliedFilter = {
 
 type Formatters = {
   idleDays: (days: number) => string
+  idleMaxDays: (days: number) => string
+  excludesMissingSignal: () => string
   neverVisited: () => string
   minSize: (bytes: number) => string
   maxSize: (bytes: number) => string
@@ -64,6 +66,18 @@ export function listAppliedWorkspaceCleanupFilters(
     add('activity.idleMinDays', format.idleDays(activity.idleMinDays), (f) => ({
       ...f,
       activity: { ...f.activity, idleMinDays: null }
+    }))
+  }
+  if (activity.idleMaxDays != null) {
+    add('activity.idleMaxDays', format.idleMaxDays(activity.idleMaxDays), (f) => ({
+      ...f,
+      activity: { ...f.activity, idleMaxDays: null }
+    }))
+  }
+  if (activity.includeMissingSignal === false) {
+    add('activity.includeMissingSignal', format.excludesMissingSignal(), (f) => ({
+      ...f,
+      activity: { ...f.activity, includeMissingSignal: true }
     }))
   }
   if (activity.neverVisited) {

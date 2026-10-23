@@ -57,6 +57,8 @@ export function normalizeWorkspaceCleanupFilterState(value: unknown): WorkspaceC
         base.activity.idleSignal
       ),
       idleMinDays: asNullableNumber(activity.idleMinDays, base.activity.idleMinDays, 0),
+      idleMaxDays: asNullableNumber(activity.idleMaxDays, base.activity.idleMaxDays ?? null, 0),
+      includeMissingSignal: asBoolean(activity.includeMissingSignal, true),
       neverVisited: asBoolean(activity.neverVisited, base.activity.neverVisited)
     },
     size: {

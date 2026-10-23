@@ -69,6 +69,15 @@ function buildAppliedFilterFormatters(): Parameters<typeof listAppliedWorkspaceC
       translate('components.workspace.cleanup.browse.chip.idleDays', 'Idle {{value0}}d+', {
         value0: days
       }),
+    idleMaxDays: (days) =>
+      translate('components.workspace.cleanup.browse.chip.idleMaxDays', 'Idle ≤ {{value0}}d', {
+        value0: days
+      }),
+    excludesMissingSignal: () =>
+      translate(
+        'components.workspace.cleanup.browse.chip.excludesMissingSignal',
+        'Known activity only'
+      ),
     neverVisited: () =>
       translate('components.workspace.cleanup.browse.chip.neverVisited', 'Never visited'),
     minSize: (bytes) =>

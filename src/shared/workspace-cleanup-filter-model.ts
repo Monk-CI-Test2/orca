@@ -53,6 +53,9 @@ export type WorkspaceCleanupActivityFilter = {
   idleSignal: WorkspaceCleanupIdleSignal
   /** "no signal in the last N days"; null disables the threshold. User-chosen, not a fixed enum. */
   idleMinDays: number | null
+  /** Inclusive upper bound; omitted by older clients. */
+  idleMaxDays?: number | null
+  includeMissingSignal?: boolean
   /** Rows Orca never recorded a user-initiated visit for. */
   neverVisited: boolean
 }
@@ -140,6 +143,8 @@ export function createDefaultWorkspaceCleanupFilterState(): WorkspaceCleanupFilt
     activity: {
       idleSignal: 'last-visited',
       idleMinDays: null,
+      idleMaxDays: null,
+      includeMissingSignal: true,
       neverVisited: false
     },
     size: { minBytes: null, maxBytes: null, includeUnsized: true },

@@ -596,3 +596,27 @@ describe('query pipeline', () => {
     expect(counts.safety).toBe(2)
   })
 })
+
+describe('activity window query integration', () => {
+  it('test_activity_window_keeps_upper_boundary_in_results', () => {
+    const state = filters((s) => {
+      s.activity.idleMinDays = 2
+      s.activity.idleMaxDays = 10
+    })
+    const boundary = makeFacets({ lastVisitedAt: FACET_NOW - 10 * DAY })
+    expect(matchesWorkspaceCleanupFilters(boundary, state, FACET_NOW)).toBe(true)
+  })
+  it('filters a mixed local and SSH fleet without inferring remote activity', () => {
+    const state = filters((s) => {
+      s.activity.idleMinDays = 2
+      s.activity.idleMaxDays = 10
+      s.activity.includeMissingSignal = false
+    })
+    const local = makeFacets({ lastVisitedAt: FACET_NOW - 5 * DAY })
+    const remote = makeFacets({
+      candidate: { executionHostId: 'ssh:builder', connectionId: 'builder' }
+    })
+    expect(matchesWorkspaceCleanupFilters(local, state, FACET_NOW)).toBe(true)
+    expect(matchesWorkspaceCleanupFilters(remote, state, FACET_NOW)).toBe(false)
+  })
+})
