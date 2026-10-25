@@ -596,3 +596,32 @@ describe('query pipeline', () => {
     expect(counts.safety).toBe(2)
   })
 })
+
+describe('branch expression query integration', () => {
+  it('test_branch_exclusions_apply_to_the_cleanup_fleet', () => {
+    const state = filters((s) => {
+      s.git.branchQuery = 'release, !archive, !wip'
+      s.git.branchQuerySyntax = 'expression'
+    })
+    const row = makeFacets({ worktree: { branch: 'refs/heads/release/archive' } })
+    expect(matchesWorkspaceCleanupFilters(row, state, FACET_NOW)).toBe(false)
+  })
+  it('supports remote branches and folder workspaces without executing Git', () => {
+    const state = filters((s) => {
+      s.git.branchQuery = 'release'
+      s.git.branchMatchMode = 'prefix'
+    })
+    const row = makeFacets({
+      candidate: { executionHostId: 'ssh:builder', connectionId: 'builder' },
+      worktree: { branch: 'refs/heads/release/v2' }
+    })
+    expect(matchesWorkspaceCleanupFilters(row, state, FACET_NOW)).toBe(true)
+    expect(
+      matchesWorkspaceCleanupFilters(
+        makeFacets({ worktree: null, candidate: { branch: '' } }),
+        state,
+        FACET_NOW
+      )
+    ).toBe(false)
+  })
+})

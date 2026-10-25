@@ -1,6 +1,8 @@
 import type {
   WorkspaceCleanupAgentState,
   WorkspaceCleanupBlockerMode,
+  WorkspaceCleanupBranchMatchMode,
+  WorkspaceCleanupBranchQuerySyntax,
   WorkspaceCleanupGitState,
   WorkspaceCleanupIdleSignal,
   WorkspaceCleanupPresence,
@@ -125,3 +127,8 @@ export function getWorkspaceCleanupGitRank(state: WorkspaceCleanupGitState): num
 export function getWorkspaceCleanupReviewRank(state: WorkspaceCleanupReviewState | null): number {
   return state === null ? 0 : (REVIEW_RANK[state] ?? 0)
 }
+
+export const WORKSPACE_CLEANUP_BRANCH_MATCH_MODE_VALUES: readonly WorkspaceCleanupBranchMatchMode[] =
+  ['contains', 'exact', 'prefix']
+export const WORKSPACE_CLEANUP_BRANCH_QUERY_SYNTAX_VALUES: readonly WorkspaceCleanupBranchQuerySyntax[] =
+  ['literal', 'expression']

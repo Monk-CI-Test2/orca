@@ -4,6 +4,7 @@ import { getExecutionHostLabel } from '../../../../shared/execution-host'
 import {
   WORKSPACE_CLEANUP_BLOCKER_MODE_VALUES,
   WORKSPACE_CLEANUP_BLOCKER_VALUES,
+  WORKSPACE_CLEANUP_BRANCH_MATCH_MODE_VALUES,
   WORKSPACE_CLEANUP_GIT_STATE_VALUES,
   WORKSPACE_CLEANUP_PRESENCE_VALUES,
   WORKSPACE_CLEANUP_REVIEW_STATE_VALUES,
@@ -13,6 +14,7 @@ import {
 import { getWorkspaceCleanupBlockerLabel } from './workspace-cleanup-candidate-labels'
 import {
   FacetChoice,
+  FacetCheckbox,
   FacetNumberField,
   FacetSection,
   FacetTextField,
@@ -20,6 +22,7 @@ import {
 } from './workspace-cleanup-facet-controls'
 import {
   getWorkspaceCleanupBlockerModeLabel,
+  getWorkspaceCleanupBranchMatchModeLabel,
   getWorkspaceCleanupGitStateLabel,
   getWorkspaceCleanupPresenceLabel,
   getWorkspaceCleanupReviewProviderLabel,
@@ -64,6 +67,36 @@ export function WorkspaceCleanupGitReviewFacets({
           label={translate('components.workspace.cleanup.browse.branchQuery', 'Branch contains')}
           value={filters.git.branchQuery}
           onChange={(branchQuery) => onPatch('git', { branchQuery })}
+        />
+        <FacetChoice
+          label={translate(
+            'components.workspace.cleanup.browse.branchMatchMode',
+            'Branch matching'
+          )}
+          value={filters.git.branchMatchMode ?? 'contains'}
+          options={WORKSPACE_CLEANUP_BRANCH_MATCH_MODE_VALUES}
+          getLabel={getWorkspaceCleanupBranchMatchModeLabel}
+          onChange={(branchMatchMode) => onPatch('git', { branchMatchMode })}
+        />
+        <FacetCheckbox
+          id="branch-query-expressions"
+          label={translate(
+            'components.workspace.cleanup.browse.branchExpressions',
+            'Use comma-separated expressions'
+          )}
+          checked={filters.git.branchQuerySyntax === 'expression'}
+          onChange={(enabled) =>
+            onPatch('git', { branchQuerySyntax: enabled ? 'expression' : 'literal' })
+          }
+        />
+        <FacetCheckbox
+          id="branch-query-case-sensitive"
+          label={translate(
+            'components.workspace.cleanup.browse.branchCaseSensitive',
+            'Case sensitive branch names'
+          )}
+          checked={filters.git.branchCaseSensitive === true}
+          onChange={(branchCaseSensitive) => onPatch('git', { branchCaseSensitive })}
         />
         <FacetChoice
           label={translate('components.workspace.cleanup.browse.prunable', 'Prunable')}

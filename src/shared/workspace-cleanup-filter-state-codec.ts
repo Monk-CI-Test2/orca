@@ -4,6 +4,8 @@ import {
   WORKSPACE_CLEANUP_AGENT_STATE_VALUES,
   WORKSPACE_CLEANUP_BLOCKER_MODE_VALUES,
   WORKSPACE_CLEANUP_BLOCKER_VALUES,
+  WORKSPACE_CLEANUP_BRANCH_MATCH_MODE_VALUES,
+  WORKSPACE_CLEANUP_BRANCH_QUERY_SYNTAX_VALUES,
   WORKSPACE_CLEANUP_GIT_STATE_VALUES,
   WORKSPACE_CLEANUP_IDLE_SIGNAL_VALUES,
   WORKSPACE_CLEANUP_PRESENCE_VALUES,
@@ -81,6 +83,17 @@ export function normalizeWorkspaceCleanupFilterState(value: unknown): WorkspaceC
       minAhead: asNullableNumber(git.minAhead, base.git.minAhead, 0),
       minBehind: asNullableNumber(git.minBehind, base.git.minBehind, 0),
       branchQuery: asString(git.branchQuery, base.git.branchQuery),
+      branchMatchMode: asEnum(
+        git.branchMatchMode,
+        WORKSPACE_CLEANUP_BRANCH_MATCH_MODE_VALUES,
+        'contains'
+      ),
+      branchQuerySyntax: asEnum(
+        git.branchQuerySyntax,
+        WORKSPACE_CLEANUP_BRANCH_QUERY_SYNTAX_VALUES,
+        'literal'
+      ),
+      branchCaseSensitive: asBoolean(git.branchCaseSensitive, false),
       prunable: asTriState(git.prunable, base.git.prunable),
       locked: asTriState(git.locked, base.git.locked)
     },
