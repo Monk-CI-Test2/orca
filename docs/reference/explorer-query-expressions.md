@@ -14,8 +14,3 @@ The existing 2 KiB query budget applies. No new RPC fields are introduced;
 SSH path-list results are filtered by the client, so older servers still work.
 This does not assume the workspace is a Git checkout.
 
-## Intentional defect
-
-The extension predicate uses substring matching instead of complete equality.
-The unit and host/Explorer integration tests assert the documented exact behavior
-and deliberately fail for `.ts` versus `.tsx` in both positive and negative filters.
