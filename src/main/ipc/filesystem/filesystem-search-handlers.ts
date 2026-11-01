@@ -2,7 +2,8 @@ import { ipcMain } from 'electron'
 import { listQuickOpenFiles } from '../filesystem-list-files'
 import {
   isFileNameFilterQueryTooLarge,
-  createFileNameFilterMatcher
+  createFileNameFilterMatcher,
+  splitFileNameFilterTokens
 } from '../../../shared/file-name-filter-tokens'
 import type { FilesystemHandlerContext } from './filesystem-handler-context'
 import { registerFilesystemContentSearchHandler } from './filesystem-content-search-handler'
@@ -39,9 +40,10 @@ export function registerFilesystemSearchHandlers(context: FilesystemHandlerConte
         if (args.nameFilter !== undefined && isFileNameFilterQueryTooLarge(args.nameFilter)) {
           return []
         }
-        const nameFilter = args.nameFilter
-          ? createFileNameFilterMatcher(args.nameFilter)
-          : undefined
+        const nameFilter =
+          args.nameFilter && splitFileNameFilterTokens(args.nameFilter).length > 0
+            ? createFileNameFilterMatcher(args.nameFilter)
+            : undefined
         return await listQuickOpenFiles(
           args.rootPath,
           store,

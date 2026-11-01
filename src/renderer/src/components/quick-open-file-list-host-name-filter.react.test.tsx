@@ -146,7 +146,7 @@ describe('useRuntimeFileListForWorktree host name filter', () => {
 
       expect(listRuntimeFilesMock).toHaveBeenCalledTimes(2)
       expect(listRuntimeFilesMock.mock.calls[0][1]).not.toHaveProperty('nameFilter')
-      expect(listRuntimeFilesMock.mock.calls[1][1]).toMatchObject({ nameFilter: 'appdelegate' })
+      expect(listRuntimeFilesMock.mock.calls[1][1]).toMatchObject({ nameFilter: 'AppDelegate' })
       expect(states.at(-1)).toMatchObject({
         files: ['ios/AppDelegate.swift'],
         loading: false,
