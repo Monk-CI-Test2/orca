@@ -124,3 +124,21 @@ describe('listQuickOpenFiles name filter', () => {
     ).rejects.toThrow('rg killed by SIGKILL')
   })
 })
+
+describe('qualified host name filtering', () => {
+  it('test_host_scan_extension_filter_excludes_tsx', async () => {
+    wslAwareSpawnMock
+      .mockImplementationOnce(() => fakeRipgrep('src/a.ts\0src/a.tsx\0vendor/a.ts\0'))
+      .mockImplementationOnce(() => fakeRipgrep(''))
+    const files = await listQuickOpenFiles(
+      '/repo',
+      makeStore('/repo'),
+      undefined,
+      undefined,
+      10,
+      undefined,
+      nameFilter('ext:ts -path:vendor')
+    )
+    expect(files).toEqual(['src/a.ts'])
+  })
+})

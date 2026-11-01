@@ -25,7 +25,6 @@ import {
   searchRuntimeFilePaths
 } from '@/runtime/runtime-file-search-client'
 import { debounceRuntimeFileRequest } from '@/runtime/runtime-file-request-debounce'
-import { splitFileNameFilterTokens } from '../../../shared/file-name-filter-tokens'
 import {
   nextCappedLocalListing,
   type CappedLocalListing
@@ -141,7 +140,7 @@ export function useRuntimeFileListForWorktree({
     connectionId === undefined &&
     cappedLocalListing?.key === listingKey &&
     !cappedLocalListing.hostFilterFailed
-      ? splitFileNameFilterTokens(query ?? '').join(' ')
+      ? (query ?? '').trim()
       : ''
   const eligibilityKey = `${listingKey}\n${recentKey}`
   const eligibleRecentCache = useQuickOpenRecentCache(enabled, eligibilityKey)

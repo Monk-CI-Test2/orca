@@ -3,7 +3,7 @@ import { compareFileNames } from '../../../../shared/file-name-sort'
 import {
   FILE_NAME_FILTER_QUERY_MAX_BYTES,
   isFileNameFilterQueryTooLarge,
-  pathMatchesFileNameFilterTokens,
+  createFileNameFilterMatcher,
   splitFileNameFilterTokens
 } from '../../../../shared/file-name-filter-tokens'
 import type { FileExplorerOperationOwner, TreeNode } from './file-explorer-types'
@@ -74,14 +74,14 @@ export function getFileExplorerNameFilterIgnoredQueryRelativePaths(
   if (source.relativePaths === null) {
     return []
   }
-  const tokens = getFileExplorerNameFilterTokens(source.query)
+  const matches = createFileNameFilterMatcher(source.query)
   return source.relativePaths
     .map((relativePath) => normalizeRelativePath(relativePath, worktreePath))
     .filter(
       (relativePath) =>
         Boolean(relativePath) &&
         (showDotfiles || !isDotfileRelativePath(relativePath, worktreePath)) &&
-        pathMatchesFileNameFilterTokens(relativePath, tokens)
+        matches(relativePath)
     )
 }
 
@@ -138,6 +138,7 @@ export function createNameFilteredFileExplorerProjection({
     return createFileExplorerRowProjectionFromParts(visibleFlatRows, rowsByPath)
   }
 
+  const matches = createFileNameFilterMatcher(nameFilter.query)
   const rootChildren = new Map<string, SyntheticTreeEntry>()
   for (const rawRelativePath of nameFilter.relativePaths) {
     const relativePath = normalizeRelativePath(rawRelativePath, worktreePath)
@@ -153,7 +154,7 @@ export function createNameFilteredFileExplorerProjection({
     if (!showGitIgnoredFiles && isPathIgnored(ignoredSet, relativePath)) {
       continue
     }
-    if (!pathMatchesFileNameFilterTokens(relativePath, nameFilterTokens)) {
+    if (!matches(relativePath)) {
       continue
     }
 

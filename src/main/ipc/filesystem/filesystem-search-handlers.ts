@@ -2,8 +2,7 @@ import { ipcMain } from 'electron'
 import { listQuickOpenFiles } from '../filesystem-list-files'
 import {
   isFileNameFilterQueryTooLarge,
-  pathMatchesFileNameFilterTokens,
-  splitFileNameFilterTokens
+  createFileNameFilterMatcher
 } from '../../../shared/file-name-filter-tokens'
 import type { FilesystemHandlerContext } from './filesystem-handler-context'
 import { registerFilesystemContentSearchHandler } from './filesystem-content-search-handler'
@@ -27,7 +26,7 @@ export function registerFilesystemSearchHandlers(context: FilesystemHandlerConte
         includeIgnored?: boolean
         allowLegacyIncludeIgnored?: boolean
         followSymlinks?: boolean
-        /** Local only: keep paths containing every whitespace-separated word, like the Explorer filter. */
+        /** Local only: match Explorer phrases, exclusions, and path/name/ext qualifiers. */
         nameFilter?: string
       }
     ): Promise<string[]> => {
@@ -40,7 +39,9 @@ export function registerFilesystemSearchHandlers(context: FilesystemHandlerConte
         if (args.nameFilter !== undefined && isFileNameFilterQueryTooLarge(args.nameFilter)) {
           return []
         }
-        const nameFilterTokens = args.nameFilter ? splitFileNameFilterTokens(args.nameFilter) : []
+        const nameFilter = args.nameFilter
+          ? createFileNameFilterMatcher(args.nameFilter)
+          : undefined
         return await listQuickOpenFiles(
           args.rootPath,
           store,
@@ -48,9 +49,7 @@ export function registerFilesystemSearchHandlers(context: FilesystemHandlerConte
           controller?.signal,
           args.maxResults,
           undefined,
-          nameFilterTokens.length > 0
-            ? (relativePath) => pathMatchesFileNameFilterTokens(relativePath, nameFilterTokens)
-            : undefined,
+          nameFilter,
           args
         )
       } finally {
