@@ -39,6 +39,7 @@ jobs:
               ['release-ref-validation', 'release-ref-validation.yml'],
               ['docs-pr', 'docs.yml'],
               ['cloud-verify-refs/pull', 'cloud-verify.yml', '/merge'],
+              ['feature-regression-refs/pull', 'feature-regression-contract.yml', '/merge'],
               ['pnpm-verification-pilot', 'ci-pnpm-verification-pilot.yml'],
               ['win-orcad-serve-switch-e2e', 'win-orcad-serve-switch-e2e.yml'],
               ['pi-provider-runtime', 'pi-provider-runtime.yml'],
@@ -67,7 +68,7 @@ jobs:
             }
             if (!await stillCurrent()) return
             for (const [prefix, workflow, suffix = ''] of targets) {
-              const group = prefix === 'cloud-verify-refs/pull'
+              const group = prefix.endsWith('/pull')
                 ? `${prefix}/${pr.number}${suffix}` : `${prefix}-${pr.number}${suffix}`
               let data
               try {
