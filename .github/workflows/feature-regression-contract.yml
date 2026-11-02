@@ -2,7 +2,7 @@ name: Feature regression contracts
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
+    types: [opened, synchronize, reopened, ready_for_review, converted_to_draft]
   workflow_dispatch:
 
 permissions:
@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   regression:
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft != true
     name: Changed feature regression contracts
     runs-on: monkci-ubuntu-24.04-4
     timeout-minutes: 30
