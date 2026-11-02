@@ -19,5 +19,5 @@ export function matchesWorkspaceCleanupActivityRange(
   if (filter.idleMinDays !== null && elapsed < filter.idleMinDays * WORKSPACE_CLEANUP_DAY_MS) {
     return false
   }
-  return maximum === null || elapsed < maximum * WORKSPACE_CLEANUP_DAY_MS
+  return maximum === null || elapsed <= maximum * WORKSPACE_CLEANUP_DAY_MS
 }
