@@ -20,6 +20,7 @@ describe('workspace cleanup browse state persistence', () => {
     const state = createDefaultWorkspaceCleanupBrowseState()
     state.filters.query = 'checkout'
     state.filters.activity = {
+      ...state.filters.activity,
       idleSignal: 'created',
       idleMinDays: 45,
       neverVisited: true

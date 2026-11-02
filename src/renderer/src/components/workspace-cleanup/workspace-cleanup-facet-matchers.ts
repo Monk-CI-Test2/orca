@@ -14,7 +14,8 @@ import type {
   WorkspaceCleanupTriState
 } from '../../../../shared/workspace-cleanup-filter-model'
 
-export const WORKSPACE_CLEANUP_DAY_MS = 24 * 60 * 60 * 1000
+import { matchesWorkspaceCleanupActivityRange } from '../../../../shared/workspace-cleanup-activity-range'
+export { WORKSPACE_CLEANUP_DAY_MS } from '../../../../shared/workspace-cleanup-activity-range'
 
 export function matchesWorkspaceCleanupTriState(
   filter: WorkspaceCleanupTriState,
@@ -38,13 +39,7 @@ export function matchesWorkspaceCleanupActivity(
   if (filter.neverVisited && facets.lastVisitedAt !== null) {
     return false
   }
-  if (filter.idleMinDays === null) {
-    return true
-  }
-  const signalAt = getIdleSignalAt(facets, filter)
-  // Why: a missing signal means Orca has no evidence of recent use, so it
-  // reads as maximally idle rather than being filtered out.
-  return signalAt === null || now - signalAt >= filter.idleMinDays * WORKSPACE_CLEANUP_DAY_MS
+  return matchesWorkspaceCleanupActivityRange(getIdleSignalAt(facets, filter), filter, now)
 }
 
 export function matchesWorkspaceCleanupSize(
