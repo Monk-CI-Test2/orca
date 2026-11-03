@@ -39,7 +39,7 @@ export function registerFilesystemSearchHandlers(context: FilesystemHandlerConte
         if (args.nameFilter !== undefined && isFileNameFilterQueryTooLarge(args.nameFilter)) {
           return []
         }
-        const nameFilter = args.nameFilter
+        const nameFilter = args.nameFilter?.trim()
           ? createFileNameFilterMatcher(args.nameFilter)
           : undefined
         return await listQuickOpenFiles(

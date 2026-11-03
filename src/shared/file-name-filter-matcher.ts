@@ -28,7 +28,7 @@ export function compileFileNameFilterTokens(
     return constraints.every(({ exclude, field, value }) => {
       const matches =
         field === 'ext'
-          ? extension.includes(value.replace(/^\./u, ''))
+          ? extension === value.replace(/^\./u, '')
           : (field === 'name' ? name : path).includes(value)
       return exclude ? !matches : matches
     })
