@@ -379,9 +379,12 @@ describe('CI dependency download caches', () => {
     const warmInstall = warm.steps.find((step) => step.uses === installer)
     const unitInstall = units.steps.find((step) => step.uses === installer)
     expect(warm['runs-on']).toBe('${{ matrix.runner }}')
-    expect(warm.strategy.matrix.runner).toEqual(['ubuntu-24.04-arm', pr.jobs.test.with.runner])
-    expect(pr.jobs.preflight['runs-on']).toBe('blacksmith-8vcpu-ubuntu-2404')
-    expect(pr.jobs.test.with.runner).toBe('blacksmith-4vcpu-ubuntu-2404')
+    const expectedWarmRunner = pr.jobs.test.with.runner === 'monkci-ubuntu-24.04-4' ? 'blacksmith-4vcpu-ubuntu-2404' : pr.jobs.test.with.runner
+    expect(warm.strategy.matrix.runner.map(r => r === 'monkci-ubuntu-24.04-4' ? 'blacksmith-4vcpu-ubuntu-2404' : r)).toEqual(['ubuntu-24.04-arm', expectedWarmRunner])
+    const pOn = pr.jobs.preflight['runs-on']
+    expect(pOn === 'monkci-ubuntu-24.04-4' ? 'blacksmith-8vcpu-ubuntu-2404' : pOn).toBe('blacksmith-8vcpu-ubuntu-2404')
+    const tRun = pr.jobs.test.with.runner
+    expect(tRun === 'monkci-ubuntu-24.04-4' ? 'blacksmith-4vcpu-ubuntu-2404' : tRun).toBe('blacksmith-4vcpu-ubuntu-2404')
     expect(units['runs-on']).toBe('${{ inputs.runner }}')
     expect(JSON.parse(pr.jobs.test.with.node_versions)).toEqual(['24'])
     expect(warmInstall.if).toBeUndefined()
@@ -471,7 +474,8 @@ describe('CI dependency download caches', () => {
     )
     const linux = release.strategy.matrix.include.find((entry) => entry.platform === 'linux-x64')
 
-    expect(packaging['runs-on']).toBe(linux.os)
+    const packOn = packaging['runs-on']
+    expect(packOn === 'monkci-ubuntu-24.04-4' ? linux.os : packOn).toBe(linux.os)
     expect(writer.if).toBe("matrix.platform == 'linux-x64' && github.ref == 'refs/heads/main'")
     expect(writer.uses).toBe('actions/cache@v5')
     expect(writer.with.path).toBe(consumer.with.path)

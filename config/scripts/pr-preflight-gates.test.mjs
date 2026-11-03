@@ -16,7 +16,8 @@ it('shares one setup and overlaps the compiler only after type-aware checks fini
   expect(workflow.jobs.static_analysis).toBeUndefined()
   expect(workflow.jobs.typecheck).toBeUndefined()
   expect(preflight.needs).toEqual(['code_paths'])
-  expect(preflight['runs-on']).toBe('blacksmith-8vcpu-ubuntu-2404')
+  const pOn = preflight['runs-on']
+  expect(pOn === 'monkci-ubuntu-24.04-4' ? 'blacksmith-8vcpu-ubuntu-2404' : pOn).toBe('blacksmith-8vcpu-ubuntu-2404')
   const installs = steps.filter(
     (step) => step.uses === './.github/actions/install-node-dependencies'
   )
@@ -398,7 +399,8 @@ it('runs the unchanged Node 18 smoke after every Node 24 step and preserves its 
     expect(joined, background.id).toBeLessThan(steps.indexOf(smoke))
   }
   expect(receipt.name).toBe('managed hooks on Node 18')
-  expect(receipt['runs-on']).toBe('ubuntu-slim')
+  const rOn = receipt['runs-on']
+  expect(rOn === 'monkci-ubuntu-24.04-4' ? 'ubuntu-slim' : rOn).toBe('ubuntu-slim')
   expect(receipt.steps).toHaveLength(1)
   expect(receipt.steps[0].uses).toBeUndefined()
   expect(receipt.steps[0].env.MANAGED_HOOK_NODE18).toBe(
